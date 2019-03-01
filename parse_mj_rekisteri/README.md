@@ -1,6 +1,6 @@
 # Museoviraston paikkatietoaineisto
 
-Museoviraston paikkatietoaineisto hylyistä json ja csv-muodossa ([lähde](https://www.museovirasto.fi/fi/palvelut-ja-ohjeet/tietojarjestelmat/kulttuuriympariston-tietojarjestelmat/kulttuuriympaeristoen-paikkatietoaineistot)).
+Museoviraston paikkatietoaineisto hylyistä json- ja csv-muodossa ([lähde](https://www.museovirasto.fi/fi/palvelut-ja-ohjeet/tietojarjestelmat/kulttuuriympariston-tietojarjestelmat/kulttuuriympaeristoen-paikkatietoaineistot)).
 
 Lähdetiedostona on käytetty tiedostoa `Muinaisjaannospisteet_t_point.dbf`. Tiedostosta on suodatettu vain tyyppiä `alusten hylyt,  ,  ,` sisältävät rivit. Sen jälkeen tiedostoa on siivottu hieman käsin ennen muuntamista csv-muotoon muuntamisen helpottamiseksi.
 

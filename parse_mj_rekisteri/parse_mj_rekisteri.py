@@ -104,6 +104,12 @@ def csv_to_json(csv_file, json_file, fieldnames):
 """
 This script parses target data from Museovirasto.
 
+If a proper number of arguments is given, the script
+first converts a given csv file of shipwrecks to
+json format. It then parses and modifies the content
+of the json file using the function modify_content()
+to whatever format we need.
+
 TO-DO:
   - remove all unused fields we don't want
     (maybe keep the extended data in a separate file

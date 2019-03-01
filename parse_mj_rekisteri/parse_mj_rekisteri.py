@@ -22,8 +22,8 @@ fieldnames = [
 ]
 
 """
-This function parses the content of the json file
-to suit our needs.
+This function parses and modifies the content of
+the json file to suit our needs.
 
 :param content: a list (in json format) to parse
 :returns: parsed and modified content

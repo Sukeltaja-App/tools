@@ -126,10 +126,6 @@ TO-DO:
   - convert 'pvm' to more appropriate date format (ISO 8601)
   - translate all fields to English where appropriate
 
-:param param1: this is a first param
-:param param2: this is a second param
-:returns: this is a description of what is returned
-:raises keyError: raises an exception
 """
 def main():
   if len(sys.argv) != 3:

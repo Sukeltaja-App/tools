@@ -16,8 +16,8 @@ fieldnames = [
   'tuhoutunut',
   'luontipvm',
   'muutospvm',
-  'zala',
-  'zylä',
+  'z_ala',
+  'z_ylä',
   'vedenalainen'
 ]
 
@@ -33,8 +33,8 @@ def modify_content(content):
   columns_with_float_type = [
     'longitude',
     'latitude',
-    'zala',
-    'zylä'
+    'z_ala',
+    'z_ylä'
   ]
 
   for row in content:

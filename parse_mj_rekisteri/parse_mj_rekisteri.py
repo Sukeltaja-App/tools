@@ -1,5 +1,6 @@
 import csv, json, sys
 from coordinates import ETRSTM35FINxy_to_WGS84lalo as convert
+from datetime import datetime
 
 fieldnames = [
   'kunta',
@@ -44,6 +45,11 @@ def modify_content(content):
     'paikannustapa'
   ]
 
+  columns_with_date_type = [
+    'luontipvm',
+    'muutospvm'
+  ]
+
   for row in content:
     for key in row:
       value = row[key]
@@ -66,6 +72,9 @@ def modify_content(content):
       # string to float where appropriate
       if (key in columns_with_float_type):
         row[key] = float(value)
+      # date to ISO 8601 where appropriate
+      if (value and key in columns_with_date_type):
+        row[key] = datetime.strptime(value, '%d.%m.%y').strftime('%Y-%m-%d')
 
     # convert coordinates from ETRS-TM35FIN to WGS84
     coordinates = convert({ 'N': row['latitude'], 'E': row['longitude'] })
@@ -138,7 +147,6 @@ TO-DO:
   - 'paikannustapa' -> find out what the codes
     (0, 1, 2, 3) mean using https://www.kyppi.fi/
     and convert to appropriate strings
-  - convert 'pvm' to more appropriate date format (ISO 8601)
   - translate all fields to English where appropriate
 
 """

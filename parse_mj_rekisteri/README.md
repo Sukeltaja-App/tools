@@ -4,8 +4,12 @@ Museoviraston paikkatietoaineisto hylyistä json- ja csv-muodossa ([lähde](http
 
 Lähdetiedostona on käytetty tiedostoa `Muinaisjaannospisteet_t_point.dbf`. Tiedostosta on suodatettu vain tyyppiä `alusten hylyt,  ,  ,` sisältävät rivit. Sen jälkeen tiedostoa on siivottu hieman käsin ennen muuntamista csv-muotoon muuntamisen helpottamiseksi.
 
+## Lisenssit
+
 Paikkatietoaineisto on alunperin julkaistu
 [CC-BY 4.0](http://paikkatieto.nba.fi/aineistot/tutkija.html) -lisenssillä.
+
+Olli Lammin [coordinates.py](https://olammi.iki.fi/sw/coordinates/) on julkaistu [MIT](https://opensource.org/licenses/MIT)-lisenssillä.
 
 ## Käyttö
 

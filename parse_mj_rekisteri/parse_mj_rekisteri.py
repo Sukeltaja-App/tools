@@ -1,4 +1,5 @@
 import csv, json, sys
+from coordinates import ETRSTM35FINxy_to_WGS84lalo as convert
 
 fieldnames = [
   'kunta',
@@ -59,6 +60,11 @@ def modify_content(content):
       # string to float where appropriate
       if (key in columns_with_float_type):
         row[key] = float(value)
+
+    # convert coordinates from ETRS-TM35FIN to WGS84
+    coordinates = convert({ 'N': row['latitude'], 'E': row['longitude'] })
+    row['latitude'] = coordinates['La']
+    row['longitude'] = coordinates['Lo']
   return content
 
 """
@@ -120,9 +126,6 @@ TO-DO:
   - 'alatyyppi' -> make a new field 'type'
     - ruuhet -> 'ruuhi'
     - * -> hylky
-  - convert latitude and longitude coordinates from
-    ETRS-TM35FIN to WGS84 (maybe using for example
-    https://olammi.iki.fi/sw/coordinates/ ?)
   - 'paikannustarkkuus' -> find out what the codes
     (0, 11000, 11001, 11002, 11003, 11004) mean using
     https://www.kyppi.fi/ and convert to appropriate strings

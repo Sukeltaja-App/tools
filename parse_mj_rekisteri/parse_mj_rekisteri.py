@@ -58,7 +58,7 @@ def modify_content(content):
         row[key] = int(value)
       # string to float where appropriate
       if (key in columns_with_float_type):
-        row[key] = float(value.replace(',', '.'))
+        row[key] = float(value)
   return content
 
 """

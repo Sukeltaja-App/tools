@@ -13,5 +13,11 @@ Olli Lammin [coordinates.py](https://olammi.iki.fi/sw/coordinates/) on julkaistu
 
 ## Käyttö
 
+Valmiiksi parsittu data (kaikki kentät) löytyy tiedostosta `hylyt.json`.
+
+[sukeltaja-backendin](https://github.com/Sukeltaja-App/sukeltaja-backend) kanssa yhteensopiva data löytyy tiedostosta `targets.json`.
+
+### Jos haluat itse ajaa skriptin
+
 1. Asenna [python](https://www.python.org/download/releases/3.0/).
 2. `python3 parse_mj_rekisteri.py <csv input filename> <json extended output filename> <json targets ouput filename (optional)>`

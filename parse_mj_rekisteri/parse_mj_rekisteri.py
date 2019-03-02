@@ -38,12 +38,18 @@ def modify_content(content):
     'z_ylä'
   ]
 
+  columns_with_int_type = [
+    'mj_id',
+    'paikannustarkkuus',
+    'paikannustapa'
+  ]
+
   for row in content:
     for key in row:
       value = row[key]
 
       # null values to appropriate places
-      if (value == '' or value == 'ei määritelty'):
+      if (not value or value == 'ei määritelty'):
         row[key] = None
       # replace 'Ei' with false
       if (key == 'tuhoutunut' and value == 'Ei'):
@@ -55,7 +61,7 @@ def modify_content(content):
         else:
           row[key] = False
       # string to int where appropriate
-      if (key == 'mj_id'):
+      if (key in columns_with_int_type):
         row[key] = int(value)
       # string to float where appropriate
       if (key in columns_with_float_type):

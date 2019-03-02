@@ -14,4 +14,4 @@ Olli Lammin [coordinates.py](https://olammi.iki.fi/sw/coordinates/) on julkaistu
 ## Käyttö
 
 1. Asenna [python](https://www.python.org/download/releases/3.0/).
-2. `python3 parse_mj_rekisteri.py <csv input filename> <json output filename>`
+2. `python3 parse_mj_rekisteri.py <csv input filename> <json extended output filename> <json targets ouput filename (optional)>`

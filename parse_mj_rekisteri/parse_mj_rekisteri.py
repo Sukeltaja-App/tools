@@ -23,33 +23,42 @@ fieldnames = [
   'vedenalainen'
 ]
 
-"""
-This function parses and modifies the content of
-the json file to suit our needs.
-
-:param content: a list (in json format) to parse
-:returns: parsed and modified content
-
-"""
-def modify_content(content):
-  columns_with_float_type = [
+columns_with_float_type = [
     'longitude',
     'latitude',
     'z_ala',
     'z_ylä'
   ]
 
-  columns_with_int_type = [
-    'mj_id',
-    'paikannustarkkuus',
-    'paikannustapa'
-  ]
+columns_with_int_type = [
+  'mj_id',
+  'paikannustarkkuus',
+  'paikannustapa'
+]
 
-  columns_with_date_type = [
-    'luontipvm',
-    'muutospvm'
-  ]
+columns_with_date_type = [
+  'luontipvm',
+  'muutospvm'
+]
 
+wanted_keys = {
+  'mj_id',
+  'kohdenimi',
+  'latitude',
+  'longitude',
+  'material',
+  'type'
+}
+
+def create_extended_json_file(content):
+  """
+  This function parses and modifies the content of
+  the json file to create an extended json file
+  with all the parameters given by Museovirasto.
+
+  :param content: a list (in json format) to parse
+  :returns: parsed and modified content
+  """
   for row in content:
     for key in row:
       value = row[key]
@@ -80,36 +89,67 @@ def modify_content(content):
     coordinates = convert({ 'N': row['latitude'], 'E': row['longitude'] })
     row['latitude'] = coordinates['La']
     row['longitude'] = coordinates['Lo']
+
   return content
 
-"""
-Opens a json file, modifies it using modify_content(),
-and writes to disk with the same filename as given.
+def create_targets_file(content):
+  """
+  This function parses and modifies the content of
+  the json file to create a json file of targets
+  in a suitable format to be directly dumped to sukeltaja_backend.
 
-:param json_file: the input file (.json)
-:raises FileNotFoundError: if input file not found
-:returns: None
+  :param content: a list (in json format) to parse
+  :returns: parsed and modified content
+  """
+  for row in content:
+    alatyyppi = row['alatyyppi']
 
-"""
-def parse_json(json_file):
+    # create material and type
+    if (alatyyppi == 'hylyt (puu)'):
+      row['type'] = 'hylky'
+      row['material'] = 'puu'
+    elif (alatyyppi == 'hylyt (metalli)'):
+      row['type'] = 'hylky'
+      row['material'] = 'metalli'
+    elif (alatyyppi == 'ruuhet'):
+      row['type'] = 'ruuhi'
+      row['material'] = 'puu'
+    # delete unwanted keys
+    unwanted_keys = set(row) - set(wanted_keys)
+    for key in unwanted_keys:
+      del row[key]
+    # rename kohdenimi to name
+    row['name'] = row['kohdenimi']
+    del row['kohdenimi']
+
+  return content
+
+
+def modify_json(json_file, modify_content, filename):
+  """
+  Opens a json file, modifies it using some function,
+  and writes to disk with the given filename.
+
+  :param json_file: the input file (.json)
+  :param modify_content: a one parameter function to modify the content
+  :param filename: the ouput file (.json)
+  :raises FileNotFoundError: if input file not found
+  """
   with open(json_file, 'r') as input_file:
     content = json.load(input_file)
     modified_content = json.dumps(modify_content(content), indent=2, ensure_ascii=False)
 
-  with open(json_file, 'w') as output_file:
+  with open(filename, 'w') as output_file:
     output_file.write(modified_content)
-    print('Modified json.')
 
-"""
-Converts a csv file with ; as delimiter to json format.
-
-:param csv_file: the input file (.csv)
-:param json_file: the output file (.json)
-:raises FileNotFoundError: if input file not found
-:returns: None
-
-"""
 def csv_to_json(csv_file, json_file, fieldnames):
+  """
+  Converts a csv file with ; as delimiter to json format.
+
+  :param csv_file: the input file (.csv)
+  :param json_file: the output file (.json)
+  :raises FileNotFoundError: if input file not found
+  """
   print("\nReading csv file '%s'..." % csv_file)
 
   with open(csv_file) as input_file:
@@ -122,45 +162,60 @@ def csv_to_json(csv_file, json_file, fieldnames):
     output_file.write(content)
     print("Converted to json '%s'." % json_file)
 
-"""
-This script parses target data from Museovirasto.
+def print_instructions():
+  """
+  Prints usage instructions to the command line.
+  """
+  print('\nThis is a small script to parse shipwreck data from Museovirasto.')
+  print('Usage:',
+    'python3 parse_mj_rekisteri.py',
+    '<csv input filename>',
+    '<json extended output filename>',
+    '<json targets ouput filename (optional)>\n'
+  )
 
-If a proper number of arguments is given, the script
-first converts a given csv file of shipwrecks to
-json format. It then parses and modifies the content
-of the json file using the function modify_content()
-to whatever format we need.
+def parse_target_data(input_file, extended_file, targets_file = None):
+  """
+  Parses target data from Museovirasto.
 
-TO-DO:
-  - remove all unused fields we don't want
-    (maybe keep the extended data in a separate file
-    if there's any future use?)
-  - 'alatyyppi' -> make a new field 'material'
-    - hylyt (puu) -> puu
-    - hylyt (metalli) -> metalli
-  - 'alatyyppi' -> make a new field 'type'
-    - ruuhet -> 'ruuhi'
-    - * -> hylky
-  - 'paikannustarkkuus' -> find out what the codes
-    (0, 11000, 11001, 11002, 11003, 11004) mean using
-    https://www.kyppi.fi/ and convert to appropriate strings
-  - 'paikannustapa' -> find out what the codes
-    (0, 1, 2, 3) mean using https://www.kyppi.fi/
-    and convert to appropriate strings
-  - translate all fields to English where appropriate
+  The script first converts a given csv file of shipwrecks to
+  json format. It then:
 
-"""
+  1)  creates an "extended" json file with all the information,
+  2)  if a targets filename is given, creates a json file with only
+      the data we need in a format suitable to be dumped
+      directly to sukeltaja-backend.
+
+  :param input_file: the input file (.csv)
+  :param extended_file: the extended output file (.json)
+  :param targets_file: the targets output file (.json)
+  """
+  csv_to_json(input_file, extended_file, fieldnames)
+
+  modify_json(extended_file, create_extended_json_file, extended_file)
+  print("Created extended json file as '%s'." % extended_file)
+
+  if (targets_file):
+    modify_json(extended_file, create_targets_file, targets_file)
+    print("Created targets json file as '%s'." % targets_file)
+
+  print('Done.\n')
+
 def main():
-  if len(sys.argv) != 3:
-    print('\nThis is a small script to parse shipwreck data from Museovirasto.')
-    print('Usage: python3 parse_mj_rekisteri.py <csv input filename> <json output filename>\n')
-  else:
-    input_file = sys.argv[1]
-    output_file = sys.argv[2]
+  """
+  Main entry of the script.
 
-    csv_to_json(input_file, output_file, fieldnames)
-    parse_json(output_file)
-    print('Done.\n')
+  If a proper number of arguments is given, run the script,
+  otherwise print instructions.
+  """
+  args = sys.argv[1:]
+
+  if len(args) == 2:
+    parse_target_data(args[0], args[1])
+  elif len(args) == 3:
+    parse_target_data(args[0], args[1], args[2])
+  else:
+    print_instructions()
 
 if __name__ == "__main__":
   main()
